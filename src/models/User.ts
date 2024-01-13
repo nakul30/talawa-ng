@@ -54,6 +54,7 @@ export interface InterfaceUser {
   token: string | undefined;
   tokenVersion: number;
   userType: string;
+  memorableId: number;
 }
 /**
  * This describes the schema for a `User` that corresponds to `InterfaceUser` document.
@@ -86,6 +87,7 @@ export interface InterfaceUser {
  * @param token - Access token.
  * @param tokenVersion - Token version.
  * @param userType - User type.
+ * @param memorableId - User memorable id.
  */
 const userSchema = new Schema({
   address: {
@@ -279,6 +281,11 @@ const userSchema = new Schema({
     required: true,
     enum: ["USER", "ADMIN", "SUPERADMIN"],
     default: "USER",
+  },
+  memorableId: {
+    type: Number,
+    unique: true,
+    required: true,
   },
 });
 

@@ -109,6 +109,13 @@ export const signUp: MutationResolvers["signUp"] = async (_parent, args) => {
   //   );
   // }
 
+  const lastUser = await User.findOne({}, {}, { sort: { memorableId: -1 } });
+  const memorableId = lastUser
+    ? isNaN(lastUser.memorableId)
+      ? 1
+      : lastUser.memorableId + 1
+    : 1;
+
   const hashedPassword = await bcrypt.hash(args.data.password, 12);
 
   // Upload file
@@ -122,6 +129,7 @@ export const signUp: MutationResolvers["signUp"] = async (_parent, args) => {
 
   const createdUser = await User.create({
     ...args.data,
+    memorableId, // Assign memorableId
     organizationUserBelongsTo: organization ? organization._id : null,
     email: args.data.email.toLowerCase(), // ensure all emails are stored as lowercase to prevent duplicated due to comparison errors
     image: uploadImageFileName ? uploadImageFileName : null,

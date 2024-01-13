@@ -52,6 +52,23 @@ export const login: MutationResolvers["login"] = async (_parent, args) => {
       requestContext.translate(INVALID_CREDENTIALS_ERROR.MESSAGE)
     );
   }
+  if (!user.memorableId) {
+    const lastUser = await User.findOne({}, {}, { sort: { memorableId: -1 } });
+    const memorableId = lastUser
+      ? isNaN(lastUser.memorableId)
+        ? 1
+        : lastUser.memorableId + 1
+      : 1;
+
+    await User.updateOne(
+      {
+        _id: user._id,
+      },
+      {
+        memorableId,
+      }
+    );
+  }
   const accessToken = await createAccessToken(user);
   const refreshToken = await createRefreshToken(user);
   copyToClipboard(`{
